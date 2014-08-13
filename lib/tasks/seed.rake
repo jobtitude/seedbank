@@ -20,8 +20,15 @@ namespace :db do
 
       environment_dependencies = glob_seed_files_matching(environment, '*.seeds.rb').sort.map { |seed_file| seed_task_from_file(seed_file) }
 
+      glob_seed_files_matching(environment+"/*/").each do |subdirectory|
+        subdirectory = File.basename(subdirectory)
+        namespace subdirectory do
+          environment_subfolders_dependencies = glob_seed_files_matching(subdirectory, '*.seeds.rb').sort.map { |seed_file| seed_task_from_file(seed_file) }
+        end
+      end
+
       desc "Load the seed data from db/seeds.rb, db/seeds/*.seeds.rb and db/seeds/#{environment}/*.seeds.rb."
-      task environment => ['db:seed:common'] + environment_dependencies
+      task environment => ['db:seed:common'] + environment_dependencies + environment_subfolders_dependencies
 
       override_dependency << "db:seed:#{environment}" if defined?(Rails) && Rails.env == environment
     end
