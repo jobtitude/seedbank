@@ -19,11 +19,10 @@ namespace :db do
       environment = File.basename(directory)
 
       environment_dependencies = glob_seed_files_matching(environment, '*.seeds.rb').sort.map { |seed_file| seed_task_from_file(seed_file) }
-      # sub_environment_dependencies = glob_seed_files_matching(environment, '/*/*.seeds.rb').sort.map { |seed_file| seed_task_from_file(seed_file) }
 
       global_sub_environment_dependencies = []
       glob_seed_files_matching(environment+'/*/').each do |subdirectory|
-        sub_environment_dependencies = glob_seed_files_matching(subdirectory, '/*/*.seeds.rb').sort.map { |seed_file| seed_task_from_file(seed_file) }
+        sub_environment_dependencies = glob_seed_files_matching(subdirectory, '*.seeds.rb').sort.map { |seed_file| seed_task_from_file(seed_file) }
         task subdirectory => sub_environment_dependencies
         global_sub_environment_dependencies += sub_environment_dependencies
       end
