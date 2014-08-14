@@ -25,7 +25,9 @@ namespace :db do
       glob_seed_files_matching(environment+'/*/').each do |subdirectory|
         subenvironment = File.basename(subdirectory)
         sub_environment_dependencies = glob_seed_files_matching(environment+"/"+subenvironment, '*.seeds.rb').sort.map { |seed_file| seed_task_from_file(seed_file) }
-        task subenvironment => sub_environment_dependencies
+        namespace environment do
+          task subenvironment => sub_environment_dependencies
+        end
         global_sub_environment_dependencies += sub_environment_dependencies
       end
 
